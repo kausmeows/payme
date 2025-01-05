@@ -1,7 +1,9 @@
-import asyncio
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from telegram import Bot
 from bot.utils import load_recipients
 from bot.logger import logger
+import asyncio
 
 async def send_reminder(bot_token, recipients_file, qr_file_path):
     """
@@ -23,13 +25,20 @@ async def send_reminder(bot_token, recipients_file, qr_file_path):
                 "Failed to send message to chat_id %s: %s", chat_id, e)
 
 
-async def schedule_reminder(bot_token, recipients_file, qr_file_path):
+async def start_scheduler(bot_token, recipients_file, qr_file_path):
     """
-    Immediately send a reminder and then keep sending it every 5 seconds.
+    Start the scheduler to send reminders on the 23rd of every month at 9 AM.
     """
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(
+        send_reminder,
+        CronTrigger(day=23, hour=9, minute=0),
+        args=[bot_token, recipients_file, qr_file_path],
+        id="monthly_reminder",
+    )
+    scheduler.start()
+    logger.info("Scheduler started. Reminder will run on the 23rd of every month at 9 AM.")
+
+    # Keep the scheduler running
     while True:
-        logger.info("Running scheduled reminder...")
-        await send_reminder(bot_token, recipients_file, qr_file_path)
-        logger.info("Reminder sent. Waiting for the next cycle...")
-        # Wait for 5 seconds before sending the next reminder
-        await asyncio.sleep(5)
+        await asyncio.sleep(1)

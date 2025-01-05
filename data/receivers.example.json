@@ -1,0 +1,6 @@
+{
+    "recipients": {
+        "@username1": "chat_id",
+        "@username2": "chat_id"
+    }
+}
