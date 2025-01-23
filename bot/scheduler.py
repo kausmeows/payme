@@ -11,7 +11,7 @@ async def send_reminder(bot_token, recipients_file, qr_file_path):
     """
     bot = Bot(bot_token)
     chat_ids = load_recipients(recipients_file)
-    message = "Reminder: Please pay @kaus_mos for the YouTube Family Subscription."
+    message = "Reminder: Please pay 60 Rs to @kaus_mos for the YouTube Family Subscription."
 
     for chat_id in chat_ids:
         try:
